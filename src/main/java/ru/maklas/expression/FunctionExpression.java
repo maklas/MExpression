@@ -68,12 +68,26 @@ public class FunctionExpression extends Expression {
     }
 
     @Override
-    protected boolean _simplify() {
-        return super._simplify();
+    public String toString() {
+        return token.getContent() + "(" + parameters.toString(", ") + ")";
+    }
+
+    public boolean canBeSimplified() {
+        //TODO неверно. Функцию можно упростить, даже если нельзя полностью её решить. Достаточно упростить её части.
+        String funName = token.content;
+        if (funName.equals("rnd")) return false;
+        for (Expression parameter : parameters) {
+            if (!(parameter instanceof VariableExpression) // == переменная
+                    && (!(parameter instanceof FunctionExpression) || ((FunctionExpression) parameter).canBeSimplified())  //Если параметр - функция которая не может быть упрощена
+                    && ((!(parameter instanceof ComplexExpression)) || ((ComplexExpression) parameter).canBeSimplified())) { //Или сложная функция которая не может быть упрощена
+                        return true;
+                    }
+        }
+        return false;
     }
 
     @Override
-    public String toString() {
-        return token.getContent() + "(" + parameters.toString(", ") + ")";
+    protected Expression _simplify() {
+        return this;
     }
 }

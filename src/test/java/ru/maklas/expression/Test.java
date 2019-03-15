@@ -3,24 +3,28 @@ package ru.maklas.expression;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 
+import java.io.PrintStream;
+
 public class Test {
 
     private static final String expression = "-3+max(3, 2) * pi * ((((max((sin(2 * 3x^e - 3 * max(2, 1)) + abs(-4)), 1))))) * (3 / 2.2) - x";
     private static final String expression2 = "3 + 2";
-    private static final Array<String> simplifiable = Array.with("2 + 2", "3 - 5", "3.333 * 3", "5/2", "4 ^ 2", "2 + 3 * 4", "max(1, 2)", "pow(3, 3)", "abs(-3)", "floor(2.4)", "sqrt(2)", "2^(3 - max(5, 1))");
+    private static final Array<String> simplifiable = Array.with("2 + 2", "3 - 5", "3.333 * 3", "5/2", "4 ^ 2", "2 + 3 * 4", "max(1, 2 + 2)", "pow(3, 3)", "abs(-3)", "floor(2.4)", "sqrt(2)", "2^3 + (3 - max(5, 1))", "rnd(100, 200)");
 
     public static void main(String[] args) throws Exception {
         int count = 0;
         for (String s : simplifiable) {
             Expression e = Compiler.compile(s);
-            Expression simpleE = e.cpy();
-            boolean simplified = simpleE.simplify();
-            System.out.println("-----" + ++count + "-----");
-            System.out.println("Original:      " + e);
-            System.out.println("Simplified:    " + simpleE);
-            System.out.println("Did something: " + simplified);
-            System.out.println("Equal:         " + e.equals(simpleE));
-            System.out.println();
+            Expression simplified = e.simplify();
+
+            PrintStream writer = (((e instanceof ComplexExpression) && ((ComplexExpression) e).canBeSimplified()) || (e instanceof FunctionExpression && ((FunctionExpression) e).canBeSimplified())) ? System.err : System.out;
+
+            writer.println("-----" + ++count + "-----");
+            writer.println("Original:      " + e + " = " + e.evaluate(singletonMap("x", 5d)));
+            writer.println("Simplified:    " + simplified + " = " + simplified.evaluate(singletonMap("x", 5d)));
+            writer.println("Equal:         " + e.equals(simplified));
+            writer.println();
+            Thread.sleep(100);
         }
 
     }
@@ -32,6 +36,8 @@ public class Test {
     }
 
     //TODO list:
+    //1. Пофиксить проблему     2^3x       ===>     2 ^ (3 * x)
+    //1. Пофиксить проблему     abs(-3)    ===>     abs((-3))
     //7. expression.simplify()  //Solves all solvable parts.
     //8. expressionValidationException.getBadTokens(); //List of bad tokens. So that they could be highlighted
     //9. expression.derivative();

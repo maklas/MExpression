@@ -110,11 +110,15 @@ public class ComplexExpression extends Expression {
         for (int i = 1; i < expressions.size; i++) {
             Expression curr = expressions.get(i);
             Expression prev = expressions.get(i - 1);
-            if (curr instanceof SignExpression && ((SignExpression) curr).getSign() == Sign.POW){
+            if (curr instanceof SignExpression && ((SignExpression) curr).getSign() == Sign.POW){ //Если текущее значение - ^
                 sb.append(curr.toString());
-            } else if (prev instanceof SignExpression && ((SignExpression) prev).getSign() == Sign.POW) {
-                sb.append(curr);
-            } else if (prev instanceof ValueExpression && ((ValueExpression) prev).isNumber() && curr instanceof VariableExpression) {
+            } else if (prev instanceof SignExpression && ((SignExpression) prev).getSign() == Sign.POW) { //Если предыдущее значение ^
+                if (curr instanceof ComplexExpression){
+                    sb.append("(").append(curr).append(")");
+                } else {
+                    sb.append(curr);
+                }
+            } else if (prev instanceof ValueExpression && ((ValueExpression) prev).isNumber() && curr instanceof VariableExpression) { //Если предыдущее значение - числа, а текущее - переменная
                 sb.append(curr);
             } else if (curr instanceof ComplexExpression) {
                 sb.append(" (").append(curr).append(")");
@@ -157,5 +161,32 @@ public class ComplexExpression extends Expression {
             }
         }
         return sb.toString();
+    }
+
+    @Override
+    protected Expression _simplify() {
+        return this;
+    }
+
+    public boolean canBeSimplified(){
+        boolean onlyPlusMinus = true;
+        boolean onlyMulDiv = true;
+        for (Expression expression : expressions) {
+            if (expression instanceof SignExpression){
+                Sign sign = ((SignExpression) expression).getSign();
+                if (sign == Sign.MUL || sign == Sign.DIV){
+                    onlyPlusMinus = false;
+                } else if (sign == Sign.PLUS || sign == Sign.MINUS){
+                    onlyMulDiv = false;
+                } else if (sign == Sign.POW){
+                    return false;
+                }
+            } else if (expression instanceof VariableExpression){
+                return false;
+            } else if (expression instanceof FunctionExpression){
+                return ((FunctionExpression) expression).canBeSimplified();
+            }
+        }
+        return onlyMulDiv || onlyPlusMinus;
     }
 }

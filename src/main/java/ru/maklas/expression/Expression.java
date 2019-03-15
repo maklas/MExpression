@@ -33,34 +33,21 @@ public abstract class Expression {
     public abstract double evaluate(ObjectMap<String, Double> parameters) throws ExpressionEvaluationException ;
 
     /**
-     * Tries to simplify this Expression.Returns true if any simplification took place.
-     * Simplification might change data in this expression, which might lead to loss of original information.
-     * E.g inlining <b>2.0 + pi</b> into <b>5.141592...</b>, so use it only if this instance of expression
+     * Tries to simplify this Expression. Returns itself if can't be simplified more than it already is.
+     * Otherwise, returns new simplified instance, so whether or not it was simplified can be checked with ==
+     * It takes significant effort to simplify, so use it only if this instance of expression
      * will be re-evaluated with different parameters.
      * Otherwise, most likely not worth calling at all.
      */
-    public final boolean simplify(){
-        boolean simplifiedAtLeastOnce = _simplify();
-        boolean simplified = simplifiedAtLeastOnce;
-        while (simplified){
-            simplified = _simplify();
-        }
-        return simplifiedAtLeastOnce;
-    }
-
-    /**
-     * {@link #simplify()} and return self
-     */
-    public final Expression simplifyAndRet(){
-        simplify();
-        return this;
+    public final Expression simplify(){
+        return _simplify();
     }
 
     public abstract void visit(ExpressionVisitor visitor);
 
     /** Do one iteration of simplification. Returns true if any simplification took place **/
-    protected boolean _simplify(){
-        return false; //TODO
+    protected Expression _simplify(){
+        return this; //TODO
     }
 
     /** Deep copy of Expression **/
