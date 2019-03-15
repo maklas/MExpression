@@ -4,7 +4,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 public class Test {
 
-    private static final String expression = "-3 + max(3, 2) * pi * (sin(2 * 3x^e - 3 * max(2, 1)) + abs(-4)) * 3 / 2.2 - x";
+    private static final String expression = "-3 + max(3, 2) * pi * (sin(2 * 3x^e - 3 * max(2, 1)) + abs(-4)) * (3 / 2.2) - x";
     private static final String expression2 = "3";
 
     public static void main(String[] args) throws Exception {

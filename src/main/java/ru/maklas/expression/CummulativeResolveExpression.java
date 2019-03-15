@@ -91,6 +91,8 @@ public class CummulativeResolveExpression extends Expression {
                 sb.append(curr);
             } else if (prev instanceof ValueExpression && ((ValueExpression) prev).getSource() == ValueExpression.Source.NUMBER && curr instanceof VariableExpression) {
                 sb.append(curr);
+            } else if (curr instanceof CummulativeResolveExpression) {
+                sb.append(" (").append(curr).append(")");
             } else {
                 sb.append(" ").append(curr);
             }

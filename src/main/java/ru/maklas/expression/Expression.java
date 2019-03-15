@@ -54,4 +54,7 @@ public abstract class Expression {
     private boolean _simplify(){
         return false; //TODO
     }
+
+    /** Deep copy of Expression **/
+    public Expression cpy() { return null; }//TODO
 }
