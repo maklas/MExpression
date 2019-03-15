@@ -37,8 +37,12 @@ public class ValueExpression extends Expression {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof ValueExpression && value == ((ValueExpression) obj).value)
-                || (value == 0 && obj instanceof NullExpression);
+        return (obj instanceof ValueExpression && value == ((ValueExpression) obj).value);
+    }
+
+    @Override
+    public void visit(ExpressionVisitor visitor) {
+        visitor.visit(this);
     }
 
     @Override

@@ -24,9 +24,7 @@ public abstract class Expression {
         return vars;
     }
 
-    protected void obtainVariables(Array<String> vars) {
-
-    }
+    protected void obtainVariables(Array<String> vars) { }
 
     /**
      * Solves expression, providing result as a double.
@@ -50,8 +48,10 @@ public abstract class Expression {
         return simplifiedAtLeastOnce;
     }
 
+    public abstract void visit(ExpressionVisitor visitor);
+
     /** Do one iteration of simplification. Returns true if any simplification took place **/
-    private boolean _simplify(){
+    protected boolean _simplify(){
         return false; //TODO
     }
 

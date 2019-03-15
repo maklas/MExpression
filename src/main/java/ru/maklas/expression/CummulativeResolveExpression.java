@@ -88,6 +88,15 @@ public class CummulativeResolveExpression extends Expression {
         return new CummulativeResolveExpression(expCpy);
     }
 
+
+    @Override
+    public void visit(ExpressionVisitor visitor) {
+        visitor.visit(this);
+        for (Expression exp : expressions) {
+            exp.visit(visitor);
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

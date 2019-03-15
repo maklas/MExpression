@@ -5,16 +5,20 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 public class FunctionExpression extends Expression {
 
-    private Token functionName;
+    private Token functionToken;
     private Array<Expression> parameters;
 
-    public FunctionExpression(Token functionName, Array<Expression> parameters) {
-        this.functionName = functionName;
+    public FunctionExpression(Token functionToken, Array<Expression> parameters) {
+        this.functionToken = functionToken;
         this.parameters = parameters;
     }
 
-    public Token getFunctionName() {
-        return functionName;
+    public Token getFunctionToken() {
+        return functionToken;
+    }
+
+    public String getFunctionName(){
+        return functionToken.content;
     }
 
     public Array<Expression> getParameters() {
@@ -28,7 +32,7 @@ public class FunctionExpression extends Expression {
             values.add(parameter.evaluate(parameters));
         }
 
-        return ExpressionUtils.evaluateFunction(functionName.getContent(), values);
+        return ExpressionUtils.evaluateFunction(functionToken.getContent(), values);
     }
 
     @Override
@@ -41,7 +45,7 @@ public class FunctionExpression extends Expression {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof FunctionExpression
-                && functionName.getContent().equals(((FunctionExpression) obj).functionName.getContent())
+                && functionToken.getContent().equals(((FunctionExpression) obj).functionToken.getContent())
                 && parameters.equals(((FunctionExpression) obj).parameters);
     }
 
@@ -52,11 +56,19 @@ public class FunctionExpression extends Expression {
             paramCpy.add(parameter.cpy());
         }
 
-        return new FunctionExpression(functionName, paramCpy);
+        return new FunctionExpression(functionToken, paramCpy);
+    }
+
+    @Override
+    public void visit(ExpressionVisitor visitor) {
+        visitor.visit(this);
+        for (Expression parameter : parameters) {
+            parameter.visit(visitor);
+        }
     }
 
     @Override
     public String toString() {
-        return functionName.getContent() + "(" + parameters.toString(", ") + ")";
+        return functionToken.getContent() + "(" + parameters.toString(", ") + ")";
     }
 }

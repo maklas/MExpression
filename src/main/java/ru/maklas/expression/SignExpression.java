@@ -67,6 +67,12 @@ public class SignExpression extends Expression {
         throw new ExpressionEvaluationException("Unknown sign command: " + sign);
     }
 
+
+    @Override
+    public void visit(ExpressionVisitor visitor) {
+        visitor.visit(this);
+    }
+
     @Override
     public boolean equals(Object obj) {
         return obj instanceof SignExpression && sign == ((SignExpression) obj).sign;

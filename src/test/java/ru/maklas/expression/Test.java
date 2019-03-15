@@ -14,8 +14,6 @@ public class Test {
 
         Expression alwaysPassExp = Compiler.compile(Test.expression);
         alwaysPassExp.evaluate(singletonMap("x", 5d));
-        System.out.println(alwaysPassExp);
-        System.out.println(alwaysPassExp.equals(alwaysPassExp.cpy()));
 
     }
 
@@ -26,11 +24,10 @@ public class Test {
     }
 
     //TODO list:
-    //5. expression.cpy()       //Deep copy of whole tree
     //6. expression.getTokens() //Token Tree
     //7. expression.simplify()  //Solves all solvable parts.
     //8. expressionValidationException.getBadTokens(); //List of bad tokens. So that they could be highlighted
     //9. expression.derivative();
-    // Memory usage optimization for singletone objects
+    // Memory usage optimization for singleton objects
 
 }

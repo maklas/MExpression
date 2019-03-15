@@ -39,6 +39,13 @@ public class VariableExpression extends Expression {
         return variableName;
     }
 
+
+
+    @Override
+    public void visit(ExpressionVisitor visitor) {
+        visitor.visit(this);
+    }
+
     @Override
     public VariableExpression cpy() {
         return new VariableExpression(variableName);
