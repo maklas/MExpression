@@ -5,12 +5,12 @@ public class NullExpression extends ValueExpression {
 
     private static final NullExpression instance = new NullExpression();
 
-    public static Expression getInstance() {
+    public static NullExpression getInstance() {
         return instance;
     }
 
-    NullExpression() {
-        super(0, Source.NUMBER);
+    private NullExpression() {
+        super(Token.nullToken, 0);
     }
 
     @Override
@@ -19,8 +19,12 @@ public class NullExpression extends ValueExpression {
     }
 
     @Override
+    public NullExpression negate() {
+        return this;
+    }
+
+    @Override
     public String toString() {
         return "0";
     }
-
 }

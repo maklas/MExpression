@@ -1,21 +1,24 @@
 package ru.maklas.expression;
 
+import org.jetbrains.annotations.Nullable;
+
 public class ExpressionEvaluationException extends Exception {
 
-    public ExpressionEvaluationException() {
+    private Token[] tokens;
 
-    }
-
+    /** Simple Expression Error with message**/
     public ExpressionEvaluationException(String message) {
         super(message);
     }
 
-    public ExpressionEvaluationException(String message, Throwable cause) {
-        super(message, cause);
+    /** Expression Exception that tells which tokens exactly are a source of a problem **/
+    public ExpressionEvaluationException(String message, Token... tokens) {
+        super(message);
+        this.tokens = tokens;
     }
 
-    public ExpressionEvaluationException(Throwable cause) {
-        super(cause);
+    @Nullable
+    public Token[] getTokens() {
+        return tokens;
     }
-
 }

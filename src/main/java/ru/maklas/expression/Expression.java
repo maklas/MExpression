@@ -48,6 +48,14 @@ public abstract class Expression {
         return simplifiedAtLeastOnce;
     }
 
+    /**
+     * {@link #simplify()} and return self
+     */
+    public final Expression simplifyAndRet(){
+        simplify();
+        return this;
+    }
+
     public abstract void visit(ExpressionVisitor visitor);
 
     /** Do one iteration of simplification. Returns true if any simplification took place **/

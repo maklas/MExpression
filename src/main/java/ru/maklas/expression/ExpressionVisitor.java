@@ -10,6 +10,6 @@ public interface ExpressionVisitor {
 
     void visit(FunctionExpression e);
 
-    void visit(CummulativeResolveExpression e);
+    void visit(ComplexExpression e);
 
 }

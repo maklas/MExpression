@@ -19,7 +19,8 @@ public class Token {
         minus,          // -
         multiply,       // *
         divide,         // /
-        pow             // ^
+        pow,            // ^
+        nill             //Null token. Doesn't exist in original text, but could be created during simplification or out of no text
         ;
 
         public boolean isSign(){
@@ -30,6 +31,8 @@ public class Token {
             return this == openPar || this == closePar;
         }
     }
+
+    public static final Token nullToken = new Token(Type.nill, "", 0, 0);
 
     /** type of token **/
     Type type;
@@ -79,6 +82,6 @@ public class Token {
 
     @Override
     public String toString() {
-        return type == Type.constant ? "Const(" + content + ")" : content;
+        return content;
     }
 }

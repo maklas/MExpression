@@ -1,25 +1,32 @@
 package ru.maklas.expression;
 
+/** Represents constant. Which is also a value. **/
 public class ConstantExpression extends ValueExpression {
 
-    private final String name;
+    private boolean negated = false;
 
-    public ConstantExpression(double value, String name) {
-        super(value, Source.CONST);
-        this.name = name;
+    public ConstantExpression(Token token, double value) {
+        super(token, value);
     }
 
+    /** Constant name **/
     public String getName() {
-        return name;
+        return token.content;
     }
 
     @Override
     public String toString() {
-        return name;
+        return negated ? "-" + token.content : token.content;
+    }
+
+    @Override
+    public ValueExpression negate() {
+        negated = !negated;
+        return super.negate();
     }
 
     @Override
     public ConstantExpression cpy() {
-        return new ConstantExpression(getValue(), name);
+        return new ConstantExpression(token, getValue());
     }
 }

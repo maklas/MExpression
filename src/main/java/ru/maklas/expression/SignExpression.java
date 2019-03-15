@@ -6,45 +6,38 @@ import java.util.Comparator;
 
 public class SignExpression extends Expression {
 
-    private static SignExpression[] instances;
-    static {
-        Sign[] values = Sign.values();
-        instances = new SignExpression[values.length];
-
-        for (int i = 0; i < values.length; i++) {
-            instances[values[i].ordinal()] = new SignExpression(values[i]);
-        }
-    }
-
-
-    public static SignExpression getInstance(Sign sign){
-        return sign == null ? null : instances[sign.ordinal()];
-    }
-
-    public enum Sign {
-        MINUS("-", 2),
-        PLUS("+", 2),
-        DIV("/", 1),
-        MUL("*", 1),
-        POW("^", 0);
-
-        private String text;
-        private int orderOfExecution; //0 goes first. 100 last
-
-        Sign(String text, int orderOfExecution) {
-            this.text = text;
-            this.orderOfExecution = orderOfExecution;
-        }
-
-        public String asText() {
-            return text;
-        }
-
-    }
+    private Token token;
     final Sign sign;
 
-    private SignExpression(Sign sign) {
+    public SignExpression(Token token) {
+        this.token = token;
+        switch (token.type){
+            case plus:
+                sign = Sign.PLUS;
+                break;
+            case minus:
+                sign = Sign.MINUS;
+                break;
+            case multiply:
+                sign = Sign.MUL;
+                break;
+            case divide:
+                sign = Sign.DIV;
+                break;
+            case pow:
+                sign = Sign.POW;
+                break;
+        }
+        throw new RuntimeException("Unacceptable Token type for SignExpression");
+    }
+
+    public SignExpression(Token token, Sign sign) {
+        this.token = token;
         this.sign = sign;
+    }
+
+    public Token getToken() {
+        return token;
     }
 
     public Sign getSign() {
@@ -53,7 +46,7 @@ public class SignExpression extends Expression {
 
     @Override
     public double evaluate(ObjectMap<String, Double> parameters) throws ExpressionEvaluationException {
-        throw new ExpressionEvaluationException("Internal error. SignExpression shall not be evaluated");
+        throw new ExpressionEvaluationException("Internal error. SignExpression must not be evaluated");
     }
 
     public double evaluate(double a, double b) throws ExpressionEvaluationException {
@@ -64,7 +57,7 @@ public class SignExpression extends Expression {
             case MUL: return a * b;
             case POW: return ExpressionUtils.safePow(a, b);
         }
-        throw new ExpressionEvaluationException("Unknown sign command: " + sign);
+        throw new ExpressionEvaluationException("Unexpected sign command: " + sign);
     }
 
 
@@ -88,12 +81,4 @@ public class SignExpression extends Expression {
         return this;
     }
 
-    public static final Comparator<Sign> signComparator = new Comparator<Sign>() {
-        @Override
-        public int compare(Sign s1, Sign s2) {
-            int o1 = s1.orderOfExecution;
-            int o2 = s2.orderOfExecution;
-            return (o1 < o2) ? -1 : ((o1 == o2) ? 0 : 1);
-        }
-    };
 }

@@ -5,20 +5,20 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 public class FunctionExpression extends Expression {
 
-    private Token functionToken;
+    private Token token;
     private Array<Expression> parameters;
 
-    public FunctionExpression(Token functionToken, Array<Expression> parameters) {
-        this.functionToken = functionToken;
+    public FunctionExpression(Token token, Array<Expression> parameters) {
+        this.token = token;
         this.parameters = parameters;
     }
 
-    public Token getFunctionToken() {
-        return functionToken;
+    public Token getToken() {
+        return token;
     }
 
     public String getFunctionName(){
-        return functionToken.content;
+        return token.content;
     }
 
     public Array<Expression> getParameters() {
@@ -32,7 +32,7 @@ public class FunctionExpression extends Expression {
             values.add(parameter.evaluate(parameters));
         }
 
-        return ExpressionUtils.evaluateFunction(functionToken.getContent(), values);
+        return ExpressionUtils.evaluateFunction(token.getContent(), values);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class FunctionExpression extends Expression {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof FunctionExpression
-                && functionToken.getContent().equals(((FunctionExpression) obj).functionToken.getContent())
+                && token.getContent().equals(((FunctionExpression) obj).token.getContent())
                 && parameters.equals(((FunctionExpression) obj).parameters);
     }
 
@@ -56,7 +56,7 @@ public class FunctionExpression extends Expression {
             paramCpy.add(parameter.cpy());
         }
 
-        return new FunctionExpression(functionToken, paramCpy);
+        return new FunctionExpression(token, paramCpy);
     }
 
     @Override
@@ -68,7 +68,12 @@ public class FunctionExpression extends Expression {
     }
 
     @Override
+    protected boolean _simplify() {
+        return super._simplify();
+    }
+
+    @Override
     public String toString() {
-        return functionToken.getContent() + "(" + parameters.toString(", ") + ")";
+        return token.getContent() + "(" + parameters.toString(", ") + ")";
     }
 }

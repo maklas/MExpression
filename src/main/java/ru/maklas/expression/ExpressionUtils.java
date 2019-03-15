@@ -13,8 +13,8 @@ public class ExpressionUtils {
     public static final Pattern positiveNumberPattern = Pattern.compile("\\d+(\\.\\d+)?");
 
     public static double getConstantValue(String name){
-        if (name.equals("pi")) return Math.PI;
-        if (name.equals("e")) return Math.E;
+        if (name.equalsIgnoreCase("pi")) return Math.PI;
+        if (name.equalsIgnoreCase("e")) return Math.E;
         return 0;
     }
 
@@ -66,11 +66,22 @@ public class ExpressionUtils {
     }
 
 
+    public static double evaluate(Sign sign, double a, double b) throws ExpressionEvaluationException {
+        switch (sign){
+            case MINUS: return a - b;
+            case PLUS: return a + b;
+            case DIV: return a / b;
+            case MUL: return a * b;
+            case POW: return ExpressionUtils.safePow(a, b);
+        }
+        throw new ExpressionEvaluationException("Unexpected sign command: " + sign);
+    }
+
     public static double safePow(double a, double b){
         if (a < 0) return -Math.pow(-a, b);
         return Math.pow(a, b);
     }
-    
+
 
     ///////////////////////////////////////////////////////////////////////////
     // VALIDATION
@@ -95,7 +106,7 @@ public class ExpressionUtils {
     }
 
     /** makes sure there are equal amount of opening and closing parenthesis **/
-    public static void validateParenthesisEven(Array<Token> tokens) throws ExpressionEvaluationException {
+    public static void validateParenthesis(Array<Token> tokens) throws ExpressionEvaluationException {
         int open = 0;
         for (Token token : tokens) {
             if (token.getType() == Token.Type.openPar){
@@ -177,13 +188,13 @@ public class ExpressionUtils {
 
 
     /**
-     * Валидация логической части массива токенов. Такие как знаки идущие подряд без цифр, цифры идущие подряд без знаков и т.д.
+     * Logical validation. 2 signs in a row are fobidden, as well as 2 numbers
      */
     public static void validateTokens(Array<Token> tokens) throws ExpressionEvaluationException {
         for (int i = 0; i < tokens.size - 1; i++) {
             Token tokenA = tokens.get(i);
             Token tokenB = tokens.get(i + 1);
-            if (tokenA.type.isSign() && tokenB.type.isSign()){
+            if (tokenA.type.isSign() && tokenB.type.isSign() && !tokenB.content.equals("-") && tokenA.content.equals("-")){
                 throw new ExpressionEvaluationException("To signs in a row at: " + tokenA.start);
             } else if (tokenA.type == Token.Type.number && tokenB.type == Token.Type.number){
                 throw new ExpressionEvaluationException("Sign is missing between " + tokenA.end + " and " + tokenB.start);
