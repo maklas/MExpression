@@ -15,9 +15,8 @@ public class Test {
         Expression alwaysPassExp = Compiler.compile(Test.expression);
         alwaysPassExp.evaluate(singletonMap("x", 5d));
         System.out.println(alwaysPassExp);
+        System.out.println(alwaysPassExp.equals(alwaysPassExp.cpy()));
 
-
-        System.out.println(new Double(Compiler.compile("pi * 3").evaluate()).equals(Compiler.compile("3 * pi").evaluate()));
     }
 
     private static <K, V> ObjectMap<K, V> singletonMap(K key, V value){

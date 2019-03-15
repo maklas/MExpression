@@ -17,4 +17,9 @@ public class ConstantExpression extends ValueExpression {
     public String toString() {
         return name;
     }
+
+    @Override
+    public ConstantExpression cpy() {
+        return new ConstantExpression(getValue(), name);
+    }
 }

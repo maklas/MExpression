@@ -46,6 +46,16 @@ public class FunctionExpression extends Expression {
     }
 
     @Override
+    public FunctionExpression cpy() {
+        Array<Expression> paramCpy = new Array<Expression>();
+        for (Expression parameter : parameters) {
+            paramCpy.add(parameter.cpy());
+        }
+
+        return new FunctionExpression(functionName, paramCpy);
+    }
+
+    @Override
     public String toString() {
         return functionName.getContent() + "(" + parameters.toString(", ") + ")";
     }

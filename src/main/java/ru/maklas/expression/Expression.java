@@ -56,5 +56,5 @@ public abstract class Expression {
     }
 
     /** Deep copy of Expression **/
-    public Expression cpy() { return null; }//TODO
+    public abstract Expression cpy();
 }

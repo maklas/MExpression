@@ -6,6 +6,21 @@ import java.util.Comparator;
 
 public class SignExpression extends Expression {
 
+    private static SignExpression[] instances;
+    static {
+        Sign[] values = Sign.values();
+        instances = new SignExpression[values.length];
+
+        for (int i = 0; i < values.length; i++) {
+            instances[values[i].ordinal()] = new SignExpression(values[i]);
+        }
+    }
+
+
+    public static SignExpression getInstance(Sign sign){
+        return sign == null ? null : instances[sign.ordinal()];
+    }
+
     public enum Sign {
         MINUS("-", 2),
         PLUS("+", 2),
@@ -26,9 +41,9 @@ public class SignExpression extends Expression {
         }
 
     }
-    Sign sign;
+    final Sign sign;
 
-    public SignExpression(Sign sign) {
+    private SignExpression(Sign sign) {
         this.sign = sign;
     }
 
@@ -60,6 +75,11 @@ public class SignExpression extends Expression {
     @Override
     public String toString() {
         return sign.asText();
+    }
+
+    @Override
+    public SignExpression cpy() {
+        return this;
     }
 
     public static final Comparator<Sign> signComparator = new Comparator<Sign>() {

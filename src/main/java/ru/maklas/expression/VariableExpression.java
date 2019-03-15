@@ -38,4 +38,9 @@ public class VariableExpression extends Expression {
     public String toString() {
         return variableName;
     }
+
+    @Override
+    public VariableExpression cpy() {
+        return new VariableExpression(variableName);
+    }
 }

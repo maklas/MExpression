@@ -9,7 +9,7 @@ public class ValueExpression extends Expression {
         CONST, //Константа из списка констант.
     }
 
-    private double value;
+    protected double value;
     private Source source;
 
     public ValueExpression(double value, Source source) {
@@ -44,5 +44,10 @@ public class ValueExpression extends Expression {
     @Override
     public String toString() {
         return value % 1 == 0 ? Long.toString(((long) value)) : String.valueOf(value);
+    }
+
+    @Override
+    public ValueExpression cpy() {
+        return new ValueExpression(value, source);
     }
 }

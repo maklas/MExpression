@@ -100,24 +100,24 @@ public class Compiler {
                 case comma:
                     throw new ExpressionEvaluationException("Should never encountered comma");
                 case plus:
-                    list.add(new SignExpression(SignExpression.Sign.PLUS));
+                    list.add(SignExpression.getInstance(SignExpression.Sign.PLUS));
                     break;
                 case minus:
-                    list.add(new SignExpression(SignExpression.Sign.MINUS));
+                    list.add(SignExpression.getInstance(SignExpression.Sign.MINUS));
                     break;
                 case multiply:
-                    list.add(new SignExpression(SignExpression.Sign.MUL));
+                    list.add(SignExpression.getInstance(SignExpression.Sign.MUL));
                     break;
                 case divide:
-                    list.add(new SignExpression(SignExpression.Sign.DIV));
+                    list.add(SignExpression.getInstance(SignExpression.Sign.DIV));
                     break;
                 case pow:
-                    list.add(new SignExpression(SignExpression.Sign.POW));
+                    list.add(SignExpression.getInstance(SignExpression.Sign.POW));
                     break;
             }
         }
 
-        if (list.size == 0) return new NullExpression();
+        if (list.size == 0) return NullExpression.getInstance();
         if (list.size == 1) return list.first();
         if (list.get(0) instanceof SignExpression && ((SignExpression) list.get(0)).getSign() == SignExpression.Sign.MINUS && list.get(1) instanceof ValueExpression){
             ((ValueExpression) list.get(1)).negate();

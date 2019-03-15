@@ -5,7 +5,13 @@ import com.badlogic.gdx.utils.ObjectMap;
 /** Just returns 0, since no data is provided **/
 public class NullExpression extends Expression {
 
-    public NullExpression() {
+    private static final NullExpression instance = new NullExpression();
+
+    public static Expression getInstance() {
+        return instance;
+    }
+
+    NullExpression() {
     }
 
     @Override
@@ -20,6 +26,11 @@ public class NullExpression extends Expression {
         } catch (ExpressionEvaluationException e) {
             return false;
         }
+    }
+
+    @Override
+    public NullExpression cpy() {
+        return this;
     }
 
     @Override

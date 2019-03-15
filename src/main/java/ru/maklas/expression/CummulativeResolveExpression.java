@@ -26,7 +26,7 @@ public class CummulativeResolveExpression extends Expression {
             Expression e = expressions.get(i);
 
             if (previousWasValue && !(e instanceof SignExpression)){ //Было число и дальше подают число. Надо поставить знак умножения.
-                resultingExpression.add(new SignExpression(SignExpression.Sign.MUL));
+                resultingExpression.add(SignExpression.getInstance(SignExpression.Sign.MUL));
                 resultingExpression.add(new ValueExpression(e.evaluate(parameters), ValueExpression.Source.NUMBER));
             } else if (previousWasValue) {
                 previousWasValue = false;
@@ -76,6 +76,16 @@ public class CummulativeResolveExpression extends Expression {
         return obj instanceof CummulativeResolveExpression
                 //TODO not exactly. 3 * 2 == 2 * 3, But this pone wouldn't satisfy
                 && expressions.equals(((CummulativeResolveExpression) obj).expressions);
+    }
+
+    @Override
+    public CummulativeResolveExpression cpy() {
+        Array<Expression> expCpy = new Array<Expression>();
+        for (Expression parameter : expressions) {
+            expCpy.add(parameter.cpy());
+        }
+
+        return new CummulativeResolveExpression(expCpy);
     }
 
     @Override
