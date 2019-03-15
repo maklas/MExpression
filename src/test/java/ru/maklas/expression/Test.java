@@ -8,10 +8,17 @@ import java.io.PrintStream;
 public class Test {
 
     private static final String expression = "-3+max(3, 2) * pi * ((((max((sin(2 * 3x^e - 3 * max(2, 1)) + abs(-4)), 1))))) * (3 / 2.2) - x";
-    private static final String expression2 = "3 + 2";
-    private static final Array<String> simplifiable = Array.with("2 + 2", "3 - 5", "3.333 * 3", "5/2", "4 ^ 2", "2 + 3 * 4", "max(1, 2 + 2)", "pow(3, 3)", "abs(-3)", "floor(2.4)", "sqrt(2)", "2^3 + (3 - max(5, 1))", "rnd(100, 200)");
+    private static final String expression2 = "- 3 + -2";
+    private static final String expression3 = "abs(-2)";
+    private static final Array<String> simplifiable = Array.with("-3", "2 + 2", "3 - 5", "3.333 * 3", "5/2", "4 ^ 2", "2 + 3 * 4", "max(1, 2 + 2)", "pow(3, 3)", "abs(-3)", "floor(2.4)", "sqrt(2)", "2^3 + (3 - max(5, 1))", "rnd(100, 200)");
 
     public static void main(String[] args) throws Exception {
+        System.out.println(Compiler.compile(expression2));
+    }
+
+
+    private static void testSimplify() throws Exception {
+
         int count = 0;
         for (String s : simplifiable) {
             Expression e = Compiler.compile(s);
@@ -26,7 +33,6 @@ public class Test {
             writer.println();
             Thread.sleep(100);
         }
-
     }
 
     private static <K, V> ObjectMap<K, V> singletonMap(K key, V value){

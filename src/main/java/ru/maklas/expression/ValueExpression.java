@@ -71,8 +71,7 @@ public class ValueExpression extends Expression {
 
     @Override
     public String toString() {
-        String val = value % 1 == 0 ? Long.toString(((long) value)) : String.valueOf(value);
-        return value < 0 ? "(" + val + ")" : val;
+        return value % 1 == 0 ? Long.toString(((long) value)) : String.valueOf(value);
     }
 
     @Override
