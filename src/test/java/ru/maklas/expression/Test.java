@@ -5,14 +5,19 @@ import com.badlogic.gdx.utils.ObjectMap;
 public class Test {
 
     private static final String expression = "-3 + max(3, 2) * pi * (sin(2 * 3x^e - 3 * max(2, 1)) + abs(-4)) * 3 / 2.2 - x";
-    private static final String expression2 = "";
+    private static final String expression2 = "3";
 
     public static void main(String[] args) throws Exception {
         Expression expression = Compiler.compile(Test.expression2);
         double result = expression.evaluate(singletonMap("x", 6d));
         System.out.println(expression + " = " + result);
 
-        Compiler.compile(Test.expression).evaluate(singletonMap("x", 5d));
+        Expression alwaysPassExp = Compiler.compile(Test.expression);
+        alwaysPassExp.evaluate(singletonMap("x", 5d));
+        System.out.println(alwaysPassExp);
+
+
+        System.out.println(new Double(Compiler.compile("pi * 3").evaluate()).equals(Compiler.compile("3 * pi").evaluate()));
     }
 
     private static <K, V> ObjectMap<K, V> singletonMap(K key, V value){
@@ -22,9 +27,6 @@ public class Test {
     }
 
     //TODO list:
-    //2. expression.variables()
-    //3. expression.equals(exp2)
-    //4. expression.toString()  //Human readable representation
     //5. expression.cpy()       //Deep copy of whole tree
     //6. expression.getTokens() //Token Tree
     //7. expression.simplify()  //Solves all solvable parts.

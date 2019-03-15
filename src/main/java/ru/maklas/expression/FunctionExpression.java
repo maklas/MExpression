@@ -32,6 +32,20 @@ public class FunctionExpression extends Expression {
     }
 
     @Override
+    protected void obtainVariables(Array<String> vars) {
+        for (Expression exp : parameters) {
+            exp.obtainVariables(vars);
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof FunctionExpression
+                && functionName.getContent().equals(((FunctionExpression) obj).functionName.getContent())
+                && parameters.equals(((FunctionExpression) obj).parameters);
+    }
+
+    @Override
     public String toString() {
         return functionName.getContent() + "(" + parameters.toString(", ") + ")";
     }

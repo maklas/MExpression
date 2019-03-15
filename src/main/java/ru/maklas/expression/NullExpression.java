@@ -14,7 +14,17 @@ public class NullExpression extends Expression {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        try {
+            return obj instanceof NullExpression || obj instanceof ValueExpression && ((Expression) obj).evaluate(null) == 0;
+        } catch (ExpressionEvaluationException e) {
+            return false;
+        }
+    }
+
+    @Override
     public String toString() {
         return "0";
     }
+
 }

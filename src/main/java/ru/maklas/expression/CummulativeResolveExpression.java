@@ -61,9 +61,40 @@ public class CummulativeResolveExpression extends Expression {
 
         return ((ValueExpression) resultingExpression.first()).getValue();
     }
+    @Override
+    protected void obtainVariables(Array<String> vars) {
+        for (Expression exp : expressions) {
+            if (!(exp instanceof SignExpression)) {
+                exp.obtainVariables(vars);
+            }
+        }
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof CummulativeResolveExpression
+                //TODO not exactly. 3 * 2 == 2 * 3, But this pone wouldn't satisfy
+                && expressions.equals(((CummulativeResolveExpression) obj).expressions);
+    }
 
     @Override
     public String toString() {
-        return expressions.toString(" ");
+        StringBuilder sb = new StringBuilder();
+        sb.append(expressions.get(0).toString());
+        for (int i = 1; i < expressions.size; i++) {
+            Expression curr = expressions.get(i);
+            Expression prev = expressions.get(i - 1);
+            if (curr instanceof SignExpression && ((SignExpression) curr).getSign() == SignExpression.Sign.POW){
+                sb.append(curr.toString());
+            } else if (prev instanceof SignExpression && ((SignExpression) prev).getSign() == SignExpression.Sign.POW) {
+                sb.append(curr);
+            } else if (prev instanceof ValueExpression && ((ValueExpression) prev).getSource() == ValueExpression.Source.NUMBER && curr instanceof VariableExpression) {
+                sb.append(curr);
+            } else {
+                sb.append(" ").append(curr);
+            }
+        }
+        return sb.toString();
     }
 }

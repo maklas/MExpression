@@ -1,5 +1,6 @@
 package ru.maklas.expression;
 
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 
 public class VariableExpression extends Expression {
@@ -19,6 +20,18 @@ public class VariableExpression extends Expression {
         Double val = parameters.get(variableName);
         if (val == null) throw new ExpressionEvaluationException("Variable " + variableName + " passed without value");
         return val;
+    }
+
+    @Override
+    protected void obtainVariables(Array<String> vars) {
+        if (!vars.contains(variableName, false)) {
+            vars.add(variableName);
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof VariableExpression && variableName.equals(((VariableExpression) obj).variableName);
     }
 
     @Override

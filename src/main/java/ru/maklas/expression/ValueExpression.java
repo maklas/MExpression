@@ -36,7 +36,13 @@ public class ValueExpression extends Expression {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof ValueExpression && value == ((ValueExpression) obj).value)
+                || (value == 0 && obj instanceof NullExpression);
+    }
+
+    @Override
     public String toString() {
-        return String.valueOf(value);
+        return value % 1 == 0 ? Long.toString(((long) value)) : String.valueOf(value);
     }
 }
