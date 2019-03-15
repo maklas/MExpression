@@ -47,7 +47,7 @@ public class SignExpression extends Expression {
             case PLUS: return a + b;
             case DIV: return a / b;
             case MUL: return a * b;
-            case POW: return Math.pow(a, b);
+            case POW: return ExpressionUtils.safePow(a, b);
         }
         throw new ExpressionEvaluationException("Unknown sign command: " + sign);
     }

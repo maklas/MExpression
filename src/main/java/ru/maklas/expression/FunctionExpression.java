@@ -5,15 +5,15 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 public class FunctionExpression extends Expression {
 
-    private BasicToken functionName;
+    private Token functionName;
     private Array<Expression> parameters;
 
-    public FunctionExpression(BasicToken functionName, Array<Expression> parameters) {
+    public FunctionExpression(Token functionName, Array<Expression> parameters) {
         this.functionName = functionName;
         this.parameters = parameters;
     }
 
-    public BasicToken getFunctionName() {
+    public Token getFunctionName() {
         return functionName;
     }
 

@@ -1,10 +1,37 @@
 package ru.maklas.expression;
 
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 
 /** Compiled expression from string. Can be evaluated and produces output as a double **/
 public abstract class Expression {
 
+    //Used for
+    private static final ObjectMap<String, Double> noValueMap = new ObjectMap<String, Double>();
+
+    /**
+     * Solves expression, providing result as a double
+     * @throws ExpressionEvaluationException if expression validation failed or variables don't have any values.
+     */
+    public final double evaluate() throws ExpressionEvaluationException {
+        return evaluate(noValueMap);
+    }
+
+    /** gets list of all variables in this equation **/
+    public final Array<String> variables(){
+        Array<String> vars = new Array<String>();
+        obtainVariables(vars);
+        return vars;
+    }
+
+    protected void obtainVariables(Array<String> vars) {
+
+    }
+
+    /**
+     * Solves expression, providing result as a double.
+     * @throws ExpressionEvaluationException if expression validation failed or variables don't have any values.
+     */
     public abstract double evaluate(ObjectMap<String, Double> parameters) throws ExpressionEvaluationException ;
 
     /**
@@ -14,7 +41,7 @@ public abstract class Expression {
      * will be re-evaluated with different parameters.
      * Otherwise, most likely not worth calling at all.
      */
-    public boolean simplify(){
+    public final boolean simplify(){
         boolean simplifiedAtLeastOnce = _simplify();
         boolean simplified = simplifiedAtLeastOnce;
         while (simplified){
@@ -27,24 +54,4 @@ public abstract class Expression {
     private boolean _simplify(){
         return false; //TODO
     }
-
-    /*
-    Evaluable Expressions:
-    (Val) - just return value
-    (Const) - just return Constant value
-    (Val + Val) return sum of Values
-    (Val * Val) return multiplication
-    (f(a, b)) Evaluate A and B, return function result
-    (A ^ B) Math.pow(A, B)
-
-    Example:
-    (-(-a)) -> -a & (-exp)
-    (A + B * C) -> (B * C) & (A + exp)
-    (Val + () + max((), ()) * A^(b + const) - abs(()))
-    |
-    V
-
-    Val + () + max
-     */
-
 }

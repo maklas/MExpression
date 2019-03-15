@@ -21,7 +21,6 @@ public class VariableExpression extends Expression {
         return val;
     }
 
-
     @Override
     public String toString() {
         return variableName;

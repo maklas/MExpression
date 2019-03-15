@@ -10,7 +10,7 @@ public class Compiler {
 
     public static Expression compile(String expression) throws ExpressionEvaluationException {
         checkNoInvalidSymbols(expression); //Validate string
-        Array<BasicToken> tokens = tokenize(expression); //Tokenize
+        Array<Token> tokens = tokenize(expression); //Tokenize
         // further validation based on tokens position and logic
         validateParenthesisEven(tokens);
         validateFunctionParams(tokens);
@@ -24,37 +24,37 @@ public class Compiler {
     }
 
     //разбиваем на Более функциональные токены. Причём возможно добавление знаков. Функции начинают сворачиваться в свои токены.
-    private static Expression makeTokenTree(Array<BasicToken> tokens) throws ExpressionEvaluationException {
+    private static Expression makeTokenTree(Array<Token> tokens) throws ExpressionEvaluationException {
 
         Array<Expression> list = new Array<Expression>(true, 16);
         for (int i = 0; i < tokens.size; i++) {
-            BasicToken token = tokens.get(i);
+            Token token = tokens.get(i);
             switch (token.getType()){
                 case functionName: {
-                    if (tokens.get(i + 2).getType() == BasicToken.Type.closePar){ //Исли за открывающейся скобкой сразу идёт закрывающаяся, значит параметров нет.
+                    if (tokens.get(i + 2).getType() == Token.Type.closePar){ //Исли за открывающейся скобкой сразу идёт закрывающаяся, значит параметров нет.
                         list.add(new FunctionExpression(token, new Array<Expression>()));
                     } else {
 
                         Array<Expression> params = new Array<Expression>();
-                        Array<BasicToken> currentParam = new Array<BasicToken>();
+                        Array<Token> currentParam = new Array<Token>();
                         int openPar = 1;
                         int j = 1;
                         while (openPar >= 1){
                             j++;
-                            BasicToken t = tokens.get(i + j);
-                            if (t.getType() == BasicToken.Type.openPar) {
+                            Token t = tokens.get(i + j);
+                            if (t.getType() == Token.Type.openPar) {
                                 openPar++;
                                 currentParam.add(t);
-                            } else if (t.getType() == BasicToken.Type.closePar) {
+                            } else if (t.getType() == Token.Type.closePar) {
                                 openPar--;
                                 if (openPar == 0){
                                     params.add(makeTokenTree(currentParam));
                                 } else {
                                     currentParam.add(t);
                                 }
-                            } else if (openPar == 1 && t.getType() == BasicToken.Type.comma){
+                            } else if (openPar == 1 && t.getType() == Token.Type.comma){
                                 params.add(makeTokenTree(currentParam));
-                                currentParam = new Array<BasicToken>();
+                                currentParam = new Array<Token>();
                             } else {
                                 currentParam.add(t);
                             }
@@ -76,14 +76,14 @@ public class Compiler {
                 case openPar: {
                     int par = 1;
                     int j = 0;
-                    Array<BasicToken> expressionTokens = new Array<BasicToken>();
+                    Array<Token> expressionTokens = new Array<Token>();
                     while (par >= 1) {
                         j++;
-                        BasicToken t = tokens.get(i + j);
-                        if (t.getType() == BasicToken.Type.openPar) {
+                        Token t = tokens.get(i + j);
+                        if (t.getType() == Token.Type.openPar) {
                             par++;
                             expressionTokens.add(t);
-                        } else if (t.getType() == BasicToken.Type.closePar) {
+                        } else if (t.getType() == Token.Type.closePar) {
                             par--;
                             if (par != 0) expressionTokens.add(t);
                         } else {
@@ -128,32 +128,32 @@ public class Compiler {
     }
 
     /** Tokenizes Expression in the most basic tokens. Does basic checks of invalid symbols**/
-    public static Array<BasicToken> tokenize(String expression) throws ExpressionEvaluationException {
-        Array<BasicToken> tokens = new Array<BasicToken>(true, 32);
-        Matcher matcher = basicTokenizingPattern.matcher(expression);
+    public static Array<Token> tokenize(String expression) throws ExpressionEvaluationException {
+        Array<Token> tokens = new Array<Token>(true, 32);
+        Matcher matcher = tokenizingPattern.matcher(expression);
 
 
         while (matcher.find()){
             String tokenText = matcher.group();
-            BasicToken token;
+            Token token;
 
             if (wordPattern.matcher(tokenText).matches()) {
                 if (functionNames.contains(tokenText, false)) {
-                    token = new BasicToken(BasicToken.Type.functionName, tokenText, matcher);
+                    token = new Token(Token.Type.functionName, tokenText, matcher);
                 } else if (constantNames.contains(tokenText, false)) {
-                    token = new BasicToken(BasicToken.Type.constant, tokenText, matcher);
+                    token = new Token(Token.Type.constant, tokenText, matcher);
                 } else {
-                    token = new BasicToken(BasicToken.Type.var, tokenText, matcher);
+                    token = new Token(Token.Type.var, tokenText, matcher);
                 }
-            } else if (positiveNnumberPattern.matcher(tokenText).matches()) token = new BasicToken(BasicToken.Type.number, tokenText, matcher);
-            else if (tokenText.equals("-")) token = new BasicToken(BasicToken.Type.minus, tokenText, matcher);
-            else if (tokenText.equals("(")) token = new BasicToken(BasicToken.Type.openPar, tokenText, matcher);
-            else if (tokenText.equals(")")) token = new BasicToken(BasicToken.Type.closePar, tokenText, matcher);
-            else if (tokenText.equals(",")) token = new BasicToken(BasicToken.Type.comma, tokenText, matcher);
-            else if (tokenText.equals("+")) token = new BasicToken(BasicToken.Type.plus, tokenText, matcher);
-            else if (tokenText.equals("/")) token = new BasicToken(BasicToken.Type.divide, tokenText, matcher);
-            else if (tokenText.equals("*")) token = new BasicToken(BasicToken.Type.multiply, tokenText, matcher);
-            else if (tokenText.equals("^")) token = new BasicToken(BasicToken.Type.pow, tokenText, matcher);
+            } else if (positiveNumberPattern.matcher(tokenText).matches()) token = new Token(Token.Type.number, tokenText, matcher);
+            else if (tokenText.equals("-")) token = new Token(Token.Type.minus, tokenText, matcher);
+            else if (tokenText.equals("(")) token = new Token(Token.Type.openPar, tokenText, matcher);
+            else if (tokenText.equals(")")) token = new Token(Token.Type.closePar, tokenText, matcher);
+            else if (tokenText.equals(",")) token = new Token(Token.Type.comma, tokenText, matcher);
+            else if (tokenText.equals("+")) token = new Token(Token.Type.plus, tokenText, matcher);
+            else if (tokenText.equals("/")) token = new Token(Token.Type.divide, tokenText, matcher);
+            else if (tokenText.equals("*")) token = new Token(Token.Type.multiply, tokenText, matcher);
+            else if (tokenText.equals("^")) token = new Token(Token.Type.pow, tokenText, matcher);
             else throw new ExpressionEvaluationException("Invalid token: '" + tokenText + "' at position: " + matcher.start());
 
             tokens.add(token);

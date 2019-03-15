@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
 public class ExpressionUtils {
 
     public static final Array<String> constantNames = Array.with("pi", "e");
-    public static final Pattern basicTokenizingPattern = Pattern.compile("[a-zA-Z][\\w]*|\\d+(\\.\\d+)?|\\.\\d+|\\(|\\)|,|\\+|-|/|\\*|\\^");
+    public static final Pattern tokenizingPattern = Pattern.compile("[a-zA-Z][\\w]*|\\d+(\\.\\d+)?|\\.\\d+|\\(|\\)|,|\\+|-|/|\\*|\\^");
     public static final Pattern wordPattern = Pattern.compile("[a-zA-Z][\\w]*"); // сотоит из чисел и букв, но начинается обязательно с буквы
-    public static final Pattern positiveNnumberPattern = Pattern.compile("\\d+(\\.\\d+)?");
+    public static final Pattern positiveNumberPattern = Pattern.compile("\\d+(\\.\\d+)?");
 
     public static double getConstantValue(String name){
         if (name.equals("pi")) return Math.PI;
@@ -18,24 +18,25 @@ public class ExpressionUtils {
         return 0;
     }
 
-
     ///////////////////////////////////////////////////////////////////////////
     // FUNCTIONS
     ///////////////////////////////////////////////////////////////////////////
     
     
-    public static final Array<String> functionNames = Array.with("sin", "cos", "abs", "max", "min", "tg", "mod", "div");
+    public static final Array<String> functionNames = Array.with("pow", "sin", "cos", "mod", "log", "rnd", "ln", "abs", "max", "min", "tan", "floor", "sqrt");
 
     public static int functionParameterSize(String functionName) {
-        if ("max".equals(functionName) || "min".equals(functionName) || "mod".equals(functionName) || "div".equals(functionName)) {
+        if ("pow".equals(functionName) || "max".equals(functionName) || "min".equals(functionName) || "mod".equals(functionName) || "log".equals(functionName) || "rnd".equals(functionName)) {
             return 2;
         }
         return 1;
     }
 
     public static double evaluateFunction(String function, Array<Double> parameters) throws ExpressionEvaluationException {
-        if ("sin".equals(function)) {
+        if        ("sin".equals(function)) {
             return Math.sin(parameters.get(0));
+        } else if ("pow".equals(function)) {
+            return safePow(parameters.get(0), parameters.get(1));
         } else if ("cos".equals(function)) {
             return Math.cos(parameters.get(0));
         } else if ("abs".equals(function)) {
@@ -44,10 +45,30 @@ public class ExpressionUtils {
             return Math.max(parameters.get(0), parameters.get(1));
         } else if ("min".equals(function)) {
             return Math.min(parameters.get(0), parameters.get(1));
-        } else if ("tg".equals(function)) {
+        } else if ("tan".equals(function)) {
             return Math.tan(parameters.get(0));
+        } else if ("sqrt".equals(function)) {
+            return Math.sqrt(parameters.get(0));
+        } else if ("mod".equals(function)) {
+            return parameters.get(0) % parameters.get(1);
+        } else if ("floor".equals(function)) {
+            return Math.floor(parameters.get(0));
+        } else if ("log".equals(function)) {
+            return Math.log(parameters.get(0)) / Math.log(parameters.get(1));
+        } else if ("ln".equals(function)) {
+            return Math.log(parameters.get(0));
+        } else if ("rnd".equals(function)) {
+            Double min = parameters.get(0);
+            Double max = parameters.get(1);
+            return Math.random() * (max - min) + min;
         }
         throw new ExpressionEvaluationException("Function " + function + " is not supported");
+    }
+
+
+    public static double safePow(double a, double b){
+        if (a < 0) return -Math.pow(-a, b);
+        return Math.pow(a, b);
     }
     
 
@@ -74,12 +95,12 @@ public class ExpressionUtils {
     }
 
     /** makes sure there are equal amount of opening and closing parenthesis **/
-    public static void validateParenthesisEven(Array<BasicToken> tokens) throws ExpressionEvaluationException {
+    public static void validateParenthesisEven(Array<Token> tokens) throws ExpressionEvaluationException {
         int open = 0;
-        for (BasicToken token : tokens) {
-            if (token.getType() == BasicToken.Type.openPar){
+        for (Token token : tokens) {
+            if (token.getType() == Token.Type.openPar){
                 open++;
-            } else if (token.getType() == BasicToken.Type.closePar){
+            } else if (token.getType() == Token.Type.closePar){
                 open--;
                 if (open < 0) throw new ExpressionEvaluationException("Closing parenthesis at position: " + token.getStart() + " doesn't have corresponding opening parenthesis");
             }
@@ -89,26 +110,26 @@ public class ExpressionUtils {
         }
     }
 
-    /** Goes through each function and makes sure that **/
-    public static void validateFunctionParams(Array<BasicToken> tokens) throws ExpressionEvaluationException{
+    /** Goes through each function and makes sure that it has proper params**/
+    public static void validateFunctionParams(Array<Token> tokens) throws ExpressionEvaluationException{
         for (int i = 0; i < tokens.size; i++) {
-            BasicToken token = tokens.get(i);
-            if (token.getType() == BasicToken.Type.functionName){
+            Token token = tokens.get(i);
+            if (token.getType() == Token.Type.functionName){
                 validateFunctionParams(tokens, token, i, functionParameterSize(token.getContent()));
             }
         }
     }
 
     /** Проверяет что количество параметров для функции совпадает с нужным **/
-    private static void validateFunctionParams(Array<BasicToken> tokens, BasicToken token, int tokenId, int paramsSize) throws ExpressionEvaluationException {
+    private static void validateFunctionParams(Array<Token> tokens, Token token, int tokenId, int paramsSize) throws ExpressionEvaluationException {
         if (tokens.size < tokenId + 2){
             throw new ExpressionEvaluationException("Function " + token.getContent() + " needs to have " + paramsSize + " parameters");
         }
-        if (tokens.get(tokenId + 1).getType() != BasicToken.Type.openPar){
+        if (tokens.get(tokenId + 1).getType() != Token.Type.openPar){
             throw new ExpressionEvaluationException("There must be '(' after " + token.getContent() + " function call");
         }
         if (paramsSize == 0){
-            if (tokens.get(tokenId + 2).getType() != BasicToken.Type.closePar){
+            if (tokens.get(tokenId + 2).getType() != Token.Type.closePar){
                 throw new ExpressionEvaluationException("A method '" + token.getContent() + "' must have 0 parameters");
             }
             return;
@@ -116,17 +137,17 @@ public class ExpressionUtils {
 
         int openParenthesis = 1;
         int currentTokenId = tokenId + 2;
-        Array<Array<BasicToken>> params = new Array<Array<BasicToken>>();
-        Array<BasicToken> currentParam = new Array<BasicToken>();
+        Array<Array<Token>> params = new Array<Array<Token>>();
+        Array<Token> currentParam = new Array<Token>();
         params.add(currentParam);
 
         while (openParenthesis != 0 && currentTokenId < tokens.size){
-            BasicToken t = tokens.get(currentTokenId);
+            Token t = tokens.get(currentTokenId);
             if (openParenthesis > 1){
                 currentParam.add(t);
-                if (t.getType() == BasicToken.Type.openPar){
+                if (t.getType() == Token.Type.openPar){
                     openParenthesis++;
-                } else if (t.getType() == BasicToken.Type.closePar){
+                } else if (t.getType() == Token.Type.closePar){
                     openParenthesis--;
                 }
             } else {
@@ -141,7 +162,7 @@ public class ExpressionUtils {
                         openParenthesis--;
                         break;
                     case comma:
-                        currentParam = new Array<BasicToken>();
+                        currentParam = new Array<Token>();
                         params.add(currentParam);
                         break;
                 }
@@ -155,10 +176,19 @@ public class ExpressionUtils {
 
 
 
-    /** Валидация логической части массива токенов. Такие как знаки идущие подряд без цифр, цифры идущие подряд без знаков и т.д.
-     * Так же тут возможна автоматическое добавление токенов. Таким образом 3х может превратиться в 3*x
+    /**
+     * Валидация логической части массива токенов. Такие как знаки идущие подряд без цифр, цифры идущие подряд без знаков и т.д.
      */
-    public static void validateTokens(Array<BasicToken> tokens) {
-        //TODO
+    public static void validateTokens(Array<Token> tokens) throws ExpressionEvaluationException {
+        for (int i = 0; i < tokens.size - 1; i++) {
+            Token tokenA = tokens.get(i);
+            Token tokenB = tokens.get(i + 1);
+            if (tokenA.type.isSign() && tokenB.type.isSign()){
+                throw new ExpressionEvaluationException("To signs in a row at: " + tokenA.start);
+            } else if (tokenA.type == Token.Type.number && tokenB.type == Token.Type.number){
+                throw new ExpressionEvaluationException("Sign is missing between " + tokenA.end + " and " + tokenB.start);
+            }
+        }
+
     }
 }
