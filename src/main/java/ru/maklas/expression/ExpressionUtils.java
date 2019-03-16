@@ -141,11 +141,15 @@ public class ExpressionUtils {
         if (tokens.get(tokenId + 1).getType() != Token.Type.openPar){
             throw new ExpressionEvaluationException("There must be '(' after " + token.getContent() + " function call");
         }
+        boolean secondTokenIsClosing = tokens.get(tokenId + 2).getType() == Token.Type.closePar;
         if (paramsSize == 0){
-            if (tokens.get(tokenId + 2).getType() != Token.Type.closePar){
+            if (!secondTokenIsClosing){
                 throw new ExpressionEvaluationException("A method '" + token.getContent() + "' must have 0 parameters");
             }
             return;
+        }
+        if (secondTokenIsClosing && paramsSize > 0){
+           throw new ExpressionEvaluationException("Method " + token.getContent() + " should have " + paramsSize + " params, but it has 0");
         }
 
         int openParenthesis = 1;
