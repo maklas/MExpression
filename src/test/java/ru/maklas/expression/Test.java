@@ -46,7 +46,6 @@ public class Test {
     }
 
     //TODO list:
-    //1. Пофиксить проблему     abs(-3)    ===>     abs((-3))
     //7. expression.simplify()  //Solves all solvable parts.
     //8. expressionValidationException.getBadTokens(); //List of bad tokens. So that they could be highlighted
     //9. expression.derivative();
