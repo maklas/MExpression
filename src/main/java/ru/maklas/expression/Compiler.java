@@ -154,6 +154,19 @@ public class Compiler {
                     break;
                 case pow:
                     list.add(new SignExpression(token, Sign.POW));
+                    if (i + 2 < tokens.size) {
+                        Token next = tokens.get(i + 1);
+                        if (next.type == Token.Type.number) {
+                            Token next2 = tokens.get(i + 2);
+                            if (next2.type == Token.Type.var) {
+                                list.add(new ComplexExpression(Array.with(ValueExpression.forToken(next), new SignExpression(Token.nullToken, Sign.MUL), new VariableExpression(next2))));
+                                i += 2;
+                            } else if (next2.type == Token.Type.constant) {
+                                list.add(new ComplexExpression(Array.with(ValueExpression.forToken(next), new SignExpression(Token.nullToken, Sign.MUL), ValueExpression.forToken(next2))));
+                                i += 2;
+                            }
+                        }
+                    }
                     break;
             }
         }

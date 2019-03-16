@@ -2,8 +2,6 @@ package ru.maklas.expression;
 
 import com.badlogic.gdx.utils.ObjectMap;
 
-import java.util.Comparator;
-
 public class SignExpression extends Expression {
 
     private Token token;
