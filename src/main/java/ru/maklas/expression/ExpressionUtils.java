@@ -201,5 +201,9 @@ public class ExpressionUtils {
             }
         }
 
+        if (tokens.size > 0 && tokens.peek().type.isSign()){
+            throw new ExpressionEvaluationException("Last token of Expression can't be a sign");
+        }
+
     }
 }

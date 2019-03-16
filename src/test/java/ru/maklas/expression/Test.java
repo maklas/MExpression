@@ -8,7 +8,7 @@ import java.io.PrintStream;
 public class Test {
 
     private static final String expression = "-3 + max(3, 2) * pi * (max((sin(2 * 3x^2e - 3 * max(2, 1)) + abs(-4)), 1)) * (3 / 2.2) - x";
-    private static final String expression2 = "x^2(pi)";
+    private static final String expression2 = "x^";
     private static final String expression3 = "x^(2x)";
     private static final String expression4 = "x^2x == x^(2x) != x^2 * x";
     private static final String expression5 = "x^2(x) == (x^2)(x)";
@@ -16,7 +16,7 @@ public class Test {
 
     public static void main(String[] args) throws Exception {
         ObjectMap<String, Double> params = singletonMap("x", 5d);
-        Expression exp = Compiler.compile(expression);
+        Expression exp = Compiler.compile(expression2);
         System.out.println(exp + " = " + exp.evaluate(params));
     }
 
