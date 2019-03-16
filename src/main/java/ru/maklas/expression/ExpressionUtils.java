@@ -78,7 +78,9 @@ public class ExpressionUtils {
     }
 
     public static double safePow(double a, double b){
-        if (a < 0) return -Math.pow(-a, b);
+        if (b > -1d && b <1d && a < 0) {
+            return -Math.pow(-a, b);
+        }
         return Math.pow(a, b);
     }
 

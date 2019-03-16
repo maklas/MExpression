@@ -8,7 +8,7 @@ import java.io.PrintStream;
 public class Test {
 
     private static final String expression = "-3 + max(3, 2) * pi * (max((sin(2 * 3x^2e - 3 * max(2, 1)) + abs(-4)), 1)) * (3 / 2.2) - x";
-    private static final String expression2 = "x^";
+    private static final String expression2 = "-2^2";
     private static final String expression3 = "x^(2x)";
     private static final String expression4 = "x^2x == x^(2x) != x^2 * x";
     private static final String expression5 = "x^2(x) == (x^2)(x)";
