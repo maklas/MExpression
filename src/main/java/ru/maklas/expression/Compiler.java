@@ -173,9 +173,14 @@ public class Compiler {
 
         if (list.size == 0) return NullExpression.getInstance();
         if (list.size == 1) return list.first();
-        if (list.get(0) instanceof SignExpression && ((SignExpression) list.get(0)).getSign() == Sign.MINUS && list.get(1) instanceof ValueExpression){
-            ((ValueExpression) list.get(1)).negate();
-            list.removeIndex(0);
+        if (list.get(0) instanceof SignExpression && ((SignExpression) list.get(0)).getSign() == Sign.MINUS) {
+            if (list.get(1) instanceof ValueExpression){
+                ((ValueExpression) list.get(1)).negate();
+                list.removeIndex(0);
+            } else if (list.get(1) instanceof VariableExpression){
+                ((VariableExpression) list.get(1)).negate();
+                list.removeIndex(0);
+            }
         }
         if (list.size == 1) return list.first();
 

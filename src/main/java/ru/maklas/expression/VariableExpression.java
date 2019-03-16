@@ -10,6 +10,7 @@ public class VariableExpression extends Expression {
 
     private Token token;
     private String name;
+    private boolean negated;
 
     VariableExpression(Token token) {
         this.token = token;
@@ -25,11 +26,20 @@ public class VariableExpression extends Expression {
         return token;
     }
 
+    public boolean isNegated() {
+        return negated;
+    }
+
+    public VariableExpression negate(){
+        negated = !negated;
+        return this;
+    }
+
     @Override
     public double evaluate(ObjectMap<String, Double> parameters) throws ExpressionEvaluationException {
         Double val = parameters.get(name);
         if (val == null) throw new ExpressionEvaluationException("Variable '" + name + "' passed without value");
-        return val;
+        return negated ? -val : val;
     }
 
     @Override
@@ -46,7 +56,7 @@ public class VariableExpression extends Expression {
 
     @Override
     public String toString() {
-        return name;
+        return negated ? "-" + name : name;
     }
 
 

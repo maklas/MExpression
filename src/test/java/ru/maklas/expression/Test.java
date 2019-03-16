@@ -8,14 +8,14 @@ import java.io.PrintStream;
 public class Test {
 
     private static final String expression = "-3 + max(3, 2) * pi * (max((sin(2 * 3x^2e - 3 * max(2, 1)) + abs(-4)), 1)) * (3 / 2.2) - x";
-    private static final String expression2 = "5 - 2(x * pi)";
+    private static final String expression2 = "x^(-x)";
     private static final String expression3 = "x^(2x)";
     private static final String expression4 = "x^2x == x^(2x) != x^2 * x";
     private static final String expression5 = "x^2(x) == (x^2)(x)";
     private static final Array<String> simplifiable = Array.with("-3", "2 + 2", "3 - 5", "3.333 * 3", "5/2", "4 ^ 2", "2 + 3 * 4", "max(1, 2 + 2)", "pow(3, 3)", "abs(-3)", "floor(2.4)", "sqrt(2)", "2^3 + (3 - max(5, 1))", "rnd(100, 200)");
 
     public static void main(String[] args) throws Exception {
-        ObjectMap<String, Double> params = singletonMap("x", 5d);
+        ObjectMap<String, Double> params = singletonMap("x", -0.3d);
         Expression exp = Compiler.compile(expression2);
         System.out.println(exp + " = " + exp.evaluate(params));
     }
