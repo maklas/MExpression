@@ -196,8 +196,12 @@ public class ExpressionUtils {
         for (int i = 0; i < tokens.size - 1; i++) {
             Token tokenA = tokens.get(i);
             Token tokenB = tokens.get(i + 1);
-            if (tokenA.type.isSign() && tokenB.type.isSign() && !tokenB.content.equals("-") && tokenA.content.equals("-")){
-                throw new ExpressionEvaluationException("To signs in a row at: " + tokenA.start);
+            if (tokenA.type.isSign()) {
+                if (tokenB.type.isSign() && !tokenB.content.equals("-") && tokenA.content.equals("-")){
+                    throw new ExpressionEvaluationException("To signs in a row at: " + tokenA.start);
+                } else if (tokenB.type == Token.Type.closePar){
+                    throw new ExpressionEvaluationException("Last token before closing parenthesis can't be a sign");
+                }
             } else if (tokenA.type == Token.Type.number && tokenB.type == Token.Type.number){
                 throw new ExpressionEvaluationException("Sign is missing between " + tokenA.end + " and " + tokenB.start);
             }
